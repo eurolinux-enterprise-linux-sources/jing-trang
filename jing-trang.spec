@@ -3,9 +3,13 @@
 # - Drop isorelax and xerces license texts and references to them because
 #   our package does not actually contain them?
 
+%if 0%{?fedora} >= 20 || 0%{?rhel} >= 7
+%global headless -headless
+%endif
+
 Name:           jing-trang
 Version:        20091111
-Release:        12%{?dist}
+Release:        14%{?dist}
 Summary:        Schema validation and conversion based on RELAX NG
 
 Group:          Applications/Text
@@ -27,7 +31,11 @@ Patch3:         %{name}-20091111-saxon93-716177.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 
+%if 0%{?rhel} && 0%{?rhel} < 7
 BuildRequires:  ant-trax
+%else
+BuildRequires:  ant >= 1.8.2
+%endif
 BuildRequires:  bsh
 BuildRequires:  isorelax
 BuildRequires:  java-devel-openjdk >= 1:1.6.0
@@ -50,7 +58,7 @@ BuildRequires:  xml-commons-resolver
 Summary:        RELAX NG validator in Java
 Group:          Applications/Text
 Requires:       jpackage-utils
-Requires:       java >= 1.5.0
+Requires:       java%{?headless} >= 1.5.0
 Requires:       relaxngDatatype
 Requires:       xerces-j2
 Requires:       xml-commons-resolver
@@ -76,7 +84,7 @@ Javadoc API documentation for Jing.
 Summary:        Multi-format schema converter based on RELAX NG
 Group:          Applications/Text
 Requires:       jpackage-utils
-Requires:       java >= 1.5.0
+Requires:       java%{?headless} >= 1.5.0
 Requires:       relaxngDatatype
 Requires:       xerces-j2
 Requires:       xml-commons-resolver
@@ -93,7 +101,7 @@ for output only, not for input.
 Summary:        XML DTD to XML instance format converter
 Group:          Applications/Text
 Requires:       jpackage-utils
-Requires:       java >= 1.5.0
+Requires:       java%{?headless} >= 1.5.0
 
 %description -n dtdinst
 DTDinst is a program for converting XML DTDs into an XML instance
@@ -165,6 +173,15 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Jan 07 2014 Jan Pokorný <jpokorny@redhat.com> - 20091111-14
+- Resync with recent spec file changes in Fedora by Ville Skyttä:
+- BuildRequire ant instead of -trax (non-EL).
+- Depend on headless JRE where available.
+- Fix build (#1048867) and depend on headless JRE on EL7
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 20091111-13
+- Mass rebuild 2013-12-27
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 20091111-12
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
